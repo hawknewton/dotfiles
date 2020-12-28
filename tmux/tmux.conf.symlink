@@ -1,4 +1,7 @@
 # .tmux.conf
+set -g default-terminal 'tmux-256color'
+set -as terminal-overrides ',xterm*:Tc:sitm=\E[3m'
+
 unbind C-b
 set -g prefix C-a
 
@@ -40,11 +43,14 @@ bind -n C-j select-pane -D
 bind -n C-k select-pane -U
 bind -n C-l select-pane -R
 
+set -g @colors-solarized '256'
+
 # For TPM
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'tmux-plugins/tmux-yank'
+#set -g @plugin 'seebi/tmux-colors-solarized'
 
 # Other examples:
 # set -g @plugin 'github_username/plugin_name'

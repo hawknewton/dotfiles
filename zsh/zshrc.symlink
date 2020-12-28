@@ -139,5 +139,7 @@ source $ZSH/oh-my-zsh.sh
 #
 export LSCOLORS=exfxfeaeBxxehehbadacea
 
-
 set -o vi
+. ~/.sshrc
+
+eval $(thefuck --alias)

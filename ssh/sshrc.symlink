@@ -1,0 +1,16 @@
+function ssh() {
+  command ssh -t $* "echo -e $(printf '%q' "$(cat ~/.sshrc)") > ~/.sshrc && SSH_LOGIN=true . ~/.sshrc"
+}
+
+if [ "$SSH_LOGIN" = 'true' ]
+then
+  grep '. ./.sshrc' ~/.bash_profile > /dev/null ||  echo '. ./.sshrc' >> ~/.bash_profile
+
+  unset SSH_LOGIN
+  cat /etc/motd
+
+  # Customize your remote environment here
+  export TERM=xterm-256color
+
+  exec $SHELL -ilo vi
+fi

@@ -2,20 +2,68 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'RRethy/vim-illuminate'
 Plug 'airblade/vim-gitgutter'
-Plug 'altercation/vim-colors-solarized'
+Plug 'lifepillar/vim-solarized8'
 Plug 'elzr/vim-json'
 Plug 'guns/xterm-color-table.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'kien/ctrlp.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'jremmen/vim-ripgrep'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'janko/vim-test'
 
 call plug#end()
 
-"start solarized
-let g:solarized_termcolors=256
-syntax enable
+"basic settings
+set smartindent
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set listchars=tab:▸\ ,trail:·
+set list
+"set foldmethod=syntax
+
+let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+"set termguicolors
+
 set background=dark
-colorscheme solarized
+colorscheme solarized8
+let g:solarized_extra_hi_groups=1
+let mapleader = ","
+
+"get highlight group under cursor
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+"automatically create directories
+function s:MkNonExDir(file, buf)
+    if empty(getbufvar(a:buf, '&buftype')) && a:file!~#'\v^\w+\:\/'
+        let dir=fnamemodify(a:file, ':h')
+        if !isdirectory(dir)
+            call mkdir(dir, 'p')
+        endif
+    endif
+endfunction
+augroup BWCCreateDir
+    autocmd!
+    autocmd BufWritePre * :call s:MkNonExDir(expand('<afile>'), +expand('<abuf>'))
+augroup END
+"end
+
+"Ignore vendor for CtrlP and others
+set wildignore+=*/vendor/*,*/_vendor/*,*/tmp/*,*/spec/cassettes/*,*/node_modules/*,*/dist/*
+
+"start solarized
+"let g:solarized_termcolors=256
+"syntax enable
+"set background=dark
+"colorscheme solarized
 " end solarized
 
 "start lightline
@@ -91,8 +139,8 @@ endif
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+"                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -209,3 +257,12 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " end coc
 
+"highlight rubyClassName cterm=italic
+"
+"vim test
+let test#strategy = 'neovim'
+nmap <silent> <leader>tn :TestNearest<CR>
+nmap <silent> <leader>tf :TestFile<CR>
+nmap <silent> <leader>ts :TestSuite<CR>
+nmap <silent> <leader>tl :TestLast<CR>
+nmap <silent> <leader>tv :TestVisit<CR>
